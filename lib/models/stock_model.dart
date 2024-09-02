@@ -1,5 +1,5 @@
 class PricePoint {
-  final int time; 
+  final int time;
   final double price;
 
   PricePoint({required this.time, required this.price});

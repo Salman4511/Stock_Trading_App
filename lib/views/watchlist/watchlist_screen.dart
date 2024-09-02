@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stock_trading_app/utils/static_data.dart';
+import 'package:stock_trading_app/utils/constants.dart';
 import '../../controllers/watchlist_controller.dart';
 import '../../models/stock_model.dart';
 import 'stock_tile.dart';
+import 'package:stock_trading_app/utils/static_data.dart';
 
 class WatchlistScreen extends StatelessWidget {
   const WatchlistScreen({super.key});
@@ -14,26 +15,53 @@ class WatchlistScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Stock Watchlist'),
+        title: const Text(
+          'Stock Watchlist',
+          style: TextStyle(color: kwhite, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        elevation: 0,
+        backgroundColor: kBlueGrey,
       ),
       body: ListView.builder(
         itemCount: watchlistController.stocks.length,
         itemBuilder: (context, index) {
           final stock = watchlistController.stocks[index];
-          return GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(
-                context,
-                '/chart',
-                arguments: stock,
-              );
+          return Dismissible(
+            key: Key(stock.symbol),
+            background: Container(
+              color: kRed,
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: const Icon(Icons.delete, color: Colors.white),
+            ),
+            direction: DismissDirection.endToStart,
+            onDismissed: (direction) {
+              watchlistController.removeStock(stock);
             },
-            child: StockTile(stock: stock),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(
+                  context,
+                  '/chart',
+                  arguments: stock,
+                );
+              },
+              child: StockTile(stock: stock),
+            ),
           );
         },
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: kBlueGrey,
         onPressed: () async {
+          if (watchlistController.stocks.length >= 2) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('You can only add up to 2 stocks')),
+            );
+            return;
+          }
+
           Stock? selectedStock = await showDialog<Stock>(
             context: context,
             builder: (context) {
@@ -58,11 +86,15 @@ class WatchlistScreen extends StatelessWidget {
             },
           );
 
-          if (selectedStock != null) {
+          if (selectedStock != null &&
+              !watchlistController.stocks.contains(selectedStock)) {
             watchlistController.addStock(selectedStock);
           }
         },
-        child: const Icon(Icons.add),
+        child: const Icon(
+          Icons.add,
+          color: kwhite,
+        ),
       ),
     );
   }

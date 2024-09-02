@@ -23,4 +23,16 @@ final List<Map<String, dynamic>> staticStockData = [
       {"time": 5, "price": 2735.12},
     ],
   },
+  {
+    "symbol": "MORRIS",
+    "currentPrice": 2245.12,
+    "changePercentage": 2.5,
+    "priceHistory": [
+      {"time": 1, "price": 700.00},
+      {"time": 2, "price": 710.00},
+      {"time": 3, "price": 720.00},
+      {"time": 4, "price": 730.00},
+      {"time": 5, "price": 735.12},
+    ],
+  },
 ];
