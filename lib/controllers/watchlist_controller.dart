@@ -4,11 +4,8 @@ import '../services/stock_service.dart';
 
 class WatchlistController with ChangeNotifier {
   final StockService _stockService = StockService();
-  List<Stock> _stocks = [];
+  final List<Stock> _stocks = [];
 
-  WatchlistController() {
-    _stocks = _stockService.getStaticStockData();
-  }
 
   List<Stock> get stocks => _stocks;
 

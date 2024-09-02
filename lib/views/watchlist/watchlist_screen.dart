@@ -23,35 +23,41 @@ class WatchlistScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: kBlueGrey,
       ),
-      body: ListView.builder(
-        itemCount: watchlistController.stocks.length,
-        itemBuilder: (context, index) {
-          final stock = watchlistController.stocks[index];
-          return Dismissible(
-            key: Key(stock.symbol),
-            background: Container(
-              color: kRed,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: const Icon(Icons.delete, color: Colors.white),
-            ),
-            direction: DismissDirection.endToStart,
-            onDismissed: (direction) {
-              watchlistController.removeStock(stock);
-            },
-            child: GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(
-                  context,
-                  '/chart',
-                  arguments: stock,
+      body: watchlistController.stocks.isEmpty
+          ? const Center(
+              child: Text(
+              'Watchlist is Empty',
+              style: TextStyle(fontSize: 22),
+            ))
+          : ListView.builder(
+              itemCount: watchlistController.stocks.length,
+              itemBuilder: (context, index) {
+                final stock = watchlistController.stocks[index];
+                return Dismissible(
+                  key: Key(stock.symbol),
+                  background: Container(
+                    color: kRed,
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: const Icon(Icons.delete, color: Colors.white),
+                  ),
+                  direction: DismissDirection.endToStart,
+                  onDismissed: (direction) {
+                    watchlistController.removeStock(stock);
+                  },
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/chart',
+                        arguments: stock,
+                      );
+                    },
+                    child: StockTile(stock: stock),
+                  ),
                 );
               },
-              child: StockTile(stock: stock),
             ),
-          );
-        },
-      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: kBlueGrey,
         onPressed: () async {
