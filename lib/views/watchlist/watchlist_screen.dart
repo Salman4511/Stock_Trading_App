@@ -1,10 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stock_trading_app/utils/constants.dart';
+import 'package:stock_trading_app/utils/search_and_select_dialog.dart';
+import 'package:stock_trading_app/views/watchlist/stock_tile.dart';
 import '../../controllers/watchlist_controller.dart';
 import '../../models/stock_model.dart';
-import 'stock_tile.dart';
-import 'package:stock_trading_app/utils/static_data.dart';
+import '../../utils/constants.dart';
 
 class WatchlistScreen extends StatelessWidget {
   const WatchlistScreen({super.key});
@@ -12,7 +14,6 @@ class WatchlistScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final watchlistController = Provider.of<WatchlistController>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -26,9 +27,10 @@ class WatchlistScreen extends StatelessWidget {
       body: watchlistController.stocks.isEmpty
           ? const Center(
               child: Text(
-              'Watchlist is Empty',
-              style: TextStyle(fontSize: 22),
-            ))
+                'Watchlist is Empty',
+                style: TextStyle(fontSize: 22),
+              ),
+            )
           : ListView.builder(
               itemCount: watchlistController.stocks.length,
               itemBuilder: (context, index) {
@@ -68,33 +70,23 @@ class WatchlistScreen extends StatelessWidget {
             return;
           }
 
-          Stock? selectedStock = await showDialog<Stock>(
+          final selectedStock = await showDialog<Stock>(
             context: context,
             builder: (context) {
-              return AlertDialog(
-                title: const Text('Select Stock'),
-                content: SizedBox(
-                  width: double.maxFinite,
-                  child: ListView.builder(
-                    itemCount: staticStockData.length,
-                    itemBuilder: (context, index) {
-                      final stock = Stock.fromJson(staticStockData[index]);
-                      return ListTile(
-                        title: Text(stock.symbol),
-                        onTap: () {
-                          Navigator.of(context).pop(stock);
-                        },
-                      );
-                    },
-                  ),
-                ),
-              );
+              return const SearchAndSelectDialog();
             },
           );
 
           if (selectedStock != null &&
-              !watchlistController.stocks.contains(selectedStock)) {
-            watchlistController.addStock(selectedStock);
+              !watchlistController.stocks
+                  .any((s) => s.symbol == selectedStock.symbol)) {
+            try {
+              await watchlistController.addStock(selectedStock);
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Failed to fetch stock data')),
+              );
+            }
           }
         },
         child: const Icon(

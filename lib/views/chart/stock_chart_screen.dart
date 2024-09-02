@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:stock_trading_app/utils/constants.dart';
 import '../../models/stock_model.dart';
+import '../../utils/constants.dart';
 
 class StockChartScreen extends StatelessWidget {
   final Stock stock;
@@ -45,7 +45,7 @@ class StockChartScreen extends StatelessWidget {
                 sideTitles: SideTitles(
                   showTitles: true,
                   reservedSize: 32,
-                  interval: 1,
+                  interval: (stock.priceHistory.length / 10).toDouble(),
                   getTitlesWidget: (value, meta) {
                     return Text(
                       'T${value.toInt()}',

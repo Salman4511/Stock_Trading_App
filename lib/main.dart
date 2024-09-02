@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:stock_trading_app/controllers/search_controller.dart';
 import 'views/watchlist/watchlist_screen.dart';
 import 'views/chart/stock_chart_screen.dart';
 import 'controllers/watchlist_controller.dart';
@@ -14,8 +15,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => WatchlistController(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => WatchlistController()),
+        ChangeNotifierProvider(create: (_) => SearchProvider())
+      ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Stock Trading App',

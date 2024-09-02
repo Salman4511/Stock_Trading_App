@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
 import '../models/stock_model.dart';
-import '../services/stock_service.dart';
 
 class WatchlistController with ChangeNotifier {
-  final StockService _stockService = StockService();
   final List<Stock> _stocks = [];
-
 
   List<Stock> get stocks => _stocks;
 
-  void addStock(Stock stock) {
-    if (_stocks.length < 2) {
-      _stocks.add(stock);
-      notifyListeners();
-    }
+  Future<void> addStock(Stock stock) async {
+    _stocks.add(stock);
+    notifyListeners();
   }
 
   void removeStock(Stock stock) {
