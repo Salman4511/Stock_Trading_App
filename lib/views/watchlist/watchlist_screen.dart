@@ -73,7 +73,7 @@ class WatchlistScreen extends StatelessWidget {
           final selectedStock = await showDialog<Stock>(
             context: context,
             builder: (context) {
-              return const SearchAndSelectDialog();
+              return SearchAndSelectDialog();
             },
           );
 

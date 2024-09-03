@@ -26,9 +26,10 @@ class StockChartScreen extends StatelessWidget {
             backgroundColor: kBlueAccent.withOpacity(0.1),
             lineBarsData: [
               LineChartBarData(
-                spots: stock.priceHistory
-                    .map((e) => FlSpot(e.time.toDouble(), e.price))
-                    .toList(),
+                spots: [
+                  FlSpot(0, stock.dayLow),
+                  FlSpot(1, stock.dayHigh),
+                ],
                 isCurved: true,
                 color: kGreenAccent,
                 barWidth: 3,
@@ -45,7 +46,7 @@ class StockChartScreen extends StatelessWidget {
                 sideTitles: SideTitles(
                   showTitles: true,
                   reservedSize: 32,
-                  interval: (stock.priceHistory.length / 10).toDouble(),
+                  interval: 1,
                   getTitlesWidget: (value, meta) {
                     return Text(
                       'T${value.toInt()}',
@@ -101,14 +102,10 @@ class StockChartScreen extends StatelessWidget {
                 width: 2,
               ),
             ),
-            minX: 1,
-            maxX: stock.priceHistory.length.toDouble(),
-            minY: stock.priceHistory
-                .map((e) => e.price)
-                .reduce((value, element) => value < element ? value : element),
-            maxY: stock.priceHistory
-                .map((e) => e.price)
-                .reduce((value, element) => value > element ? value : element),
+            minX: 0,
+            maxX: 1,
+            minY: stock.dayLow,
+            maxY: stock.dayHigh,
             lineTouchData: LineTouchData(
               touchTooltipData: LineTouchTooltipData(
                 getTooltipItems: (touchedSpots) {

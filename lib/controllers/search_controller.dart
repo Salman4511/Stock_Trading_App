@@ -3,34 +3,41 @@ import 'package:stock_trading_app/services/stock_service.dart';
 import 'package:stock_trading_app/models/stock_model.dart';
 
 class SearchProvider extends ChangeNotifier {
-  String _query = '';
   List<Stock> _stocks = [];
-  bool _isLoading = false;
+  List<Stock> _filteredStocks = [];
+  bool _isLoading = true;
 
-  String get query => _query;
-  List<Stock> get stocks => _stocks;
+  List<Stock> get stocks => _filteredStocks;
   bool get isLoading => _isLoading;
 
-  Future<void> searchStocks(String symbol) async {
-    _query = symbol;
+  SearchProvider() {
+    loadStocks();
+  }
 
-    if (symbol.isEmpty) {
-      _stocks = [];
-      notifyListeners();
-      return;
-    }
-
-    _isLoading = true;
-    notifyListeners();
-
+  Future<void> loadStocks() async {
     try {
-      final stock = await StockService().fetchStock(symbol);
-      _stocks = [stock];
+      final service = StockService();
+      _stocks = await service.fetchAllStocks();
+      _filteredStocks = _stocks;
+      print('Stocks loaded: ${_stocks.length}');
     } catch (e) {
-      _stocks = [];
+      print('Error loading stocks: $e');
+      _filteredStocks = [];
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  void searchStocks(String query) {
+    if (query.isEmpty) {
+      _filteredStocks = _stocks;
+    } else {
+      _filteredStocks = _stocks
+          .where((stock) =>
+              stock.symbol.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    }
+    notifyListeners();
   }
 }
